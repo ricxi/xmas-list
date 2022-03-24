@@ -4,7 +4,8 @@
   "description": "a christmas list app",
   "main": "index.ts",
   "scripts": {
-    "start": "ts-node-dev --respawn --transpile-only ./src/index.ts"
+    "start": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "Richard Xiong",
