@@ -1,10 +1,17 @@
 import 'dotenv/config';
-import express, { Request, Response } from 'express';
-import routes from './routes';
+import express from 'express';
+import routes from './routes/index';
 
 const app = express();
 
-routes(app);
+// middleware
+app.use(express.json());
+
+// simple health checkup
+app.use('/v1/healthcheck', routes.healthcheck);
+
+// routes for user resource
+app.use('/v1/users', routes.user);
 
 const PORT = process.env.PORT || 9000;
 
