@@ -19,7 +19,8 @@ const register = (req: Request, res: Response) => {
 
   // validate that all fields are included
   if (!name || !email || !password) {
-    return res.status(400).json({ message: 'please include all fields' });
+    res.status(400);
+    throw new Error('please include all fields');
   }
 
   const token = 'nice';
