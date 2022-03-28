@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
+import db from './config/db';
 import errorHandler from './middleware/errorHandler';
 import routes from './routes/index';
 
@@ -20,6 +21,7 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 9000;
 
-app.listen(PORT, () => {
-  console.log(`App is listening on port ${PORT}...`);
+app.listen(PORT, async () => {
+  await db.connect();
+  console.log(`Server is listening on port ${PORT}...`);
 });
