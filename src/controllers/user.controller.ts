@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 // TODO: change to POST
-// @route  GET: /v1/users/:userId
+// @route  POST: /v1/users/:userId
 const login = (req: Request, res: Response) => {
   return res.status(200).json({
     userId: req.params.userId,
