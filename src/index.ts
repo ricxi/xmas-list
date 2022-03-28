@@ -6,6 +6,7 @@ const app = express();
 
 // middleware
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // simple health checkup
 app.use('/v1/healthcheck', routes.healthcheck);
