@@ -1,7 +1,14 @@
 import { Request, Response } from 'express';
 
-// TODO: change to POST
-// @route  POST: /v1/users/:userId
+/**
+ * login controller for the route  POST: /v1/users/:userId
+ *
+ * @param req
+ * @param res
+ *
+ * TODO: Add validation
+ *
+ */
 const login = (req: Request, res: Response) => {
   return res.status(200).json({
     userId: req.params.userId,
@@ -11,9 +18,15 @@ const login = (req: Request, res: Response) => {
   });
 };
 
-// TODO: improve validation check
-// FIXME: returns 'please include all fields' if incorrect json fields are included
-// @route  POST: /v1/users/
+/**
+ * register controller for the route POST: /v1/users/
+ *
+ * @param req - receive POST request with name, email, and password in request body
+ * @param res - send response status 201 with a json object that has the user's name, email, password, and a token
+ *
+ * TODO: improve validation check
+ * FIXME: returns 'please include all fields' if incorrect json fields are included
+ */
 const register = (req: Request, res: Response) => {
   const { name, email, password } = req.body;
 
