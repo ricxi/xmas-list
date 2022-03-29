@@ -1,5 +1,12 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 
+interface ErrorInfo {
+  errors: {
+    message: string;
+    stack?: any;
+  };
+}
+
 /**
  * Returns a JSON wrapped error to the client
  *
@@ -18,10 +25,15 @@ const errorHandler: ErrorRequestHandler = (
 ) => {
   const statusCode = res.statusCode ? res.statusCode : 500;
 
-  res.status(statusCode).json({
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : null,
-  });
+  const errInfo: ErrorInfo = {
+    errors: {
+      message: err.message,
+    },
+  };
+
+  if (process.env.NODE_ENV === 'development') errInfo.errors.stack = err.stack;
+
+  res.status(statusCode).json(errInfo);
 };
 
 export default errorHandler;
