@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
-const { Schema, model } = mongoose;
+const { Schema, Types, model } = mongoose;
 
 export type UserInput = Omit<User, 'createdAt' | 'updatedAt'>;
 
 export interface User {
+  _id: Types.ObjectId;
   email: string;
   name: string;
   password: string;

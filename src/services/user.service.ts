@@ -47,4 +47,7 @@ const getByEmail = async (email: string): Promise<User | null> => {
   }
 };
 
+// TODO: get all users
+// TODO: update a user
+
 export default { create, exists, getByEmail };

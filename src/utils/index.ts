@@ -1,0 +1,1 @@
+export { generateJwtById } from './token';

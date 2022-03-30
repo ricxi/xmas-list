@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { Types } from 'mongoose';
-import jwt from 'jsonwebtoken';
+import { generateJwtById } from '../utils';
 import services from '../services';
 
 /**
- * login controller for the route  POST: /v1/users/:userId
+ * login controller for the route  POST: /v1/users/login
  *
  * @param req - receive POST request with email, and password in request body
  * @param res - send response status 200 with a json object that has the user's info and a token
  *
- * TODO: Add token
+ * TODO: Password hashing
  *
  */
 const login = async (req: Request, res: Response) => {
@@ -23,7 +23,16 @@ const login = async (req: Request, res: Response) => {
 
     if (!user) throw new Error('a user with this email does not exist');
 
-    return res.status(200).json(user);
+    const token = generateJwtById(user._id);
+
+    const userInfo = {
+      name: user.name,
+      email: user.email,
+      isAdmin: user.isAdmin,
+      token,
+    };
+
+    return res.status(200).json(userInfo);
   } catch (error: any) {
     return res.status(400).json({
       errors: {
@@ -35,7 +44,7 @@ const login = async (req: Request, res: Response) => {
 };
 
 /**
- * register controller for the route POST: /v1/users/
+ * register controller for the route POST: /v1/users/register
  *
  * @param req - receive POST request with name, email, and password in request body
  * @param res - send response status 201 with a json object that has the user's name, email, password, and a token
@@ -60,7 +69,7 @@ const register = async (req: Request, res: Response) => {
 
     const user = await services.user.create(req.body);
 
-    const token = generateToken(user._id);
+    const token = generateJwtById(user._id);
 
     return res.status(201).json({
       name: user.name,
@@ -75,14 +84,6 @@ const register = async (req: Request, res: Response) => {
       },
     });
   }
-};
-
-// TODO: maybe see if I can assert _id into a string
-// TODO: move this into utils
-const generateToken = (_id: Types.ObjectId) => {
-  return jwt.sign({ _id }, process.env.JWT_SECRET as string, {
-    expiresIn: '25d',
-  });
 };
 
 export default { login, register };
