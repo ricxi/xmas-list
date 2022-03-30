@@ -1,18 +1,20 @@
-import mongoose from 'mongoose';
-const { Schema, Types, model } = mongoose;
+import { Types, Schema, model } from 'mongoose';
 
+// TODO: should I move all my types and interfaces into a separate file?
 export type UserInput = Omit<User, 'createdAt' | 'updatedAt'>;
 
+// TODO: should I move all my types and interfaces into a separate file?
 export interface User {
-  _id: Types.ObjectId;
+  _id?: Types.ObjectId;
   email: string;
   name: string;
   password: string;
   isAdmin?: boolean;
-  createAt: Date;
+  createdAt: Date;
   updatedAt: Date;
 }
 
+// create a user schema
 const userSchema = new Schema<User>(
   {
     name: {
@@ -39,4 +41,5 @@ const userSchema = new Schema<User>(
   }
 );
 
+// export user model
 export default model<User>('User', userSchema);

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { generateJwtById } from '../utils';
+import bcrypt from 'bcrypt';
+import { errorWrapper, generateJwtById } from '../utils';
 import services from '../services';
 
 /**
@@ -22,6 +23,9 @@ const login = async (req: Request, res: Response) => {
 
     if (!user) throw new Error('a user with this email does not exist');
 
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) throw new Error('Incorrect password');
+
     const token = generateJwtById(user._id);
 
     const userInfo = {
@@ -33,12 +37,7 @@ const login = async (req: Request, res: Response) => {
 
     return res.status(200).json(userInfo);
   } catch (error: any) {
-    return res.status(400).json({
-      errors: {
-        message: ['unable to log in user', error.message],
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      },
-    });
+    return res.status(400).json(errorWrapper(error, 'unable to log in user'));
   }
 };
 
@@ -59,14 +58,22 @@ const register = async (req: Request, res: Response) => {
     if (!name || !email || !password)
       throw new Error('please include all fields');
 
-    const userExists = await services.user.exists(email);
-
-    if (userExists) {
+    if (await services.user.exists(email)) {
       res.status(400);
       throw new Error('user already exists');
     }
 
-    const user = await services.user.create(req.body);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const userInput = {
+      name,
+      email,
+      password: hashedPassword,
+    };
+
+    // Do I need to check if a user was created?
+    const user = await services.user.create(userInput);
 
     const token = generateJwtById(user._id);
 
@@ -76,12 +83,7 @@ const register = async (req: Request, res: Response) => {
       token,
     });
   } catch (error: any) {
-    res.status(400).json({
-      errors: {
-        message: ['unable to register user', error.message],
-        stack: process.env.NODE_ENV === 'development' ? error.stack : null,
-      },
-    });
+    res.status(400).json(errorWrapper(error, 'unable to register user'));
   }
 };
 

@@ -1,6 +1,7 @@
 import models, { User, UserInput } from '../models';
 
 /**
+ * Create a new user
  *
  * @param input - data is obtained from the request body and is of UserInput type
  * @returns A promise of the User
@@ -14,7 +15,7 @@ const create = async (input: UserInput) => {
 };
 
 /**
- * determine if the user exists by searching for them by email
+ * Determine if the user exists by searching for them by email
  *
  * @param email - is the unique input in the database used to find the user
  * @returns - false if user does not exist and true otherwise
@@ -34,7 +35,7 @@ const exists = async (email: string): Promise<boolean> => {
 };
 
 /**
- * retrieve the user by their email
+ * Retrieve the user by their email
  *
  * @param email - is the unique input in the database used to retrieve the user
  * @returns - a Promise with the User info or null if an error occurs

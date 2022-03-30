@@ -1,1 +1,2 @@
-export { generateJwtById } from './token';
+export * from './token';
+export * from './errorWrapper';
