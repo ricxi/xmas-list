@@ -16,9 +16,6 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
   try {
-    if (!email) throw new Error('email is missing');
-    if (!password) throw new Error('password cannot be blank');
-
     const user = await services.user.getByEmail(email);
 
     if (!user) throw new Error('a user with this email does not exist');
@@ -57,10 +54,6 @@ const register = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
 
   try {
-    // validate that all fields are included
-    if (!name || !email || !password)
-      throw new Error('please include all fields');
-
     if (await services.user.exists(email))
       throw new Error('unable to register: user already exists');
 
