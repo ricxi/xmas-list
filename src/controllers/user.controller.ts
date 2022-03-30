@@ -1,6 +1,6 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import { errorWrapper, generateJwtById } from '../utils';
+import { generateJwtById } from '../utils';
 import services from '../services';
 
 /**
@@ -12,7 +12,7 @@ import services from '../services';
  * TODO: Password hashing
  *
  */
-const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
 
   try {
@@ -24,7 +24,9 @@ const login = async (req: Request, res: Response) => {
     if (!user) throw new Error('a user with this email does not exist');
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) throw new Error('Incorrect password');
+    if (!match) {
+      throw new Error('unable to login: incorrect password');
+    }
 
     const token = generateJwtById(user._id);
 
@@ -37,7 +39,8 @@ const login = async (req: Request, res: Response) => {
 
     return res.status(200).json(userInfo);
   } catch (error: any) {
-    return res.status(400).json(errorWrapper(error, 'unable to log in user'));
+    res.status(400);
+    return next(error);
   }
 };
 
@@ -50,7 +53,7 @@ const login = async (req: Request, res: Response) => {
  * TODO: improve validation check
  * FIXME: returns 'please include all fields' if incorrect json fields are included
  */
-const register = async (req: Request, res: Response) => {
+const register = async (req: Request, res: Response, next: NextFunction) => {
   const { name, email, password } = req.body;
 
   try {
@@ -58,10 +61,8 @@ const register = async (req: Request, res: Response) => {
     if (!name || !email || !password)
       throw new Error('please include all fields');
 
-    if (await services.user.exists(email)) {
-      res.status(400);
-      throw new Error('user already exists');
-    }
+    if (await services.user.exists(email))
+      throw new Error('unable to register: user already exists');
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -83,7 +84,8 @@ const register = async (req: Request, res: Response) => {
       token,
     });
   } catch (error: any) {
-    res.status(400).json(errorWrapper(error, 'unable to register user'));
+    res.status(400);
+    next(error);
   }
 };
 

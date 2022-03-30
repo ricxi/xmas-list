@@ -18,10 +18,11 @@ const validate = (schema: AnyZodObject) => {
         query: req.query,
         params: req.params,
       });
+      next();
     } catch (error: any) {
       return res.status(400).send(error.errors);
     }
   };
 };
 
-export default validate;
+export { validate };
