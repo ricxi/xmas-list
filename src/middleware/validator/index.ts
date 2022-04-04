@@ -11,7 +11,6 @@ import { AnyZodObject } from 'zod';
  * @returns - a function
  */
 const validate = (schema: AnyZodObject) => {
-  console.log('Here');
   return (req: Request, res: Response, next: NextFunction) => {
     console.log('Here'.toUpperCase());
     try {
